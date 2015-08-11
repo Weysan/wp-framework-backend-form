@@ -15,6 +15,12 @@ class Url extends Text implements InputInterface
         $validation = parent::validate();
 
         if ($validation) {
+            
+            if(!isset($this->args['required']) || !$this->args['required']){
+                if($this->value == '')
+                    return true;
+            }
+            
             $url_absolute_preg = "/https?:\/\/(www\.)?([a-zA-Z0-9-_]+)\.([a-zA-Z0-9]{2,4})([\/\s])?/i";
 
             if (!preg_match($url_absolute_preg, $this->value)) {

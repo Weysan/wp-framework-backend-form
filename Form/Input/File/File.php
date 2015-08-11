@@ -33,7 +33,11 @@ class File implements InputInterface
             $this->label = $this->args['label'];
         }
 
-        \wp_enqueue_media();
+        
+        
+        if(!current_theme_supports('post-thumbnails')){
+            \wp_enqueue_media();
+        }
         \wp_enqueue_script('custom-header');
 
         \add_action('admin_menu', array($this, 'createMenuBO'));
@@ -138,6 +142,7 @@ class File implements InputInterface
     {
         // Add to the top of our data-update-link page
         if (isset($_GET['file'])) {
+            //die('là');
             $id_file = $_GET['file'];
 
             $id_input = str_replace('update_file_', '', $_GET['page']);

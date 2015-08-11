@@ -95,7 +95,10 @@ class Form
     public function setValues(array $values)
     {
         foreach ($this->inputs as $input) {
-            if (isset($values[$input->getName()])) {
+            if($input->getName()){
+                if ($values[$input->getName()] == null) {
+                    $values[$input->getName()] = '';
+                }
                 $input->setValue($values[$input->getName()]);
             }
         }
@@ -110,9 +113,6 @@ class Form
                  //if($save[$k] === false)
                      //throw new \Exception('Error while saving '. $input->getName());
             }
-
-             //var_dump($save);
-             //die();
         } else {
             return false;
         }

@@ -23,6 +23,16 @@ class WpForm
 
     public function __construct($content_type, $form_title, array $formsFields, array $_post = array())
     {
+        
+        $current_content_type = $_POST['post_type'];
+        if(!$current_content_type){
+            $current_content_type = 'post';
+        }
+        
+        if($content_type != $current_content_type)
+            return;
+            
+        
         $this->fields = $formsFields;
 
         $this->_post = $_post;
@@ -142,9 +152,9 @@ class WpForm
     public function save($post_id)
     {
         $this->generateForm(get_post($post_id));
-
+        
         $this->formInstance->setValues($_POST);
-
+        
         return $this->formInstance->save($post_id);
     }
 }

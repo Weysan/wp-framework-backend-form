@@ -1,13 +1,13 @@
 <?php
-namespace Form\Input\Text;
+namespace Form\Input\Checkbox;
 
 use Form\Input\InputInterface;
 /**
- * Type de champs Input text
+ * Création d'un champs type checkbox.
  *
- * @author Raphael GONCALVES <raphael@couleur-citron.com>
+ * @author Raphael GONCALVES <contact@raphael-goncalves.fr>
  */
-class Text implements InputInterface
+class Checkbox implements InputInterface
 {
     protected $name;
 
@@ -25,11 +25,15 @@ class Text implements InputInterface
     {
         $this->name = $name;
 
+        
+        if($value){
+            $value = 1;
+        } else {
+            $value = 0;
+        }
         $this->value = $value;
 
         $this->id = $id;
-
-        $args['class'] = 'large-text';
 
         $this->args = $args;
 
@@ -53,7 +57,11 @@ class Text implements InputInterface
             $html .= '<th><label for="'.$this->id.'">'.$this->label.'</label></th>';
         }
 
-        $html .= '<td><input type="text" name="'.$this->name.'" value="'.$this->value.'"';
+        $html .= '<td><input type="checkbox" name="'.$this->name.'" value="1"';
+        
+        if($this->value && $this->value == 1){
+            $html .= ' checked="checked"';
+        }
 
         if ($this->id) {
             $html .= ' id="'.$this->id.'"';
@@ -80,10 +88,9 @@ class Text implements InputInterface
         if (isset($this->args['required']) && $this->args['required'] && !$this->value) {
             return false;
         }
-
-        if (!is_string($this->value) && !is_null($this->value)) {
-            return false;
-        }
+        
+        if(!in_array($this->value, array(0, 1)))
+                return false;
 
         return true;
     }
@@ -95,6 +102,11 @@ class Text implements InputInterface
      */
     public function setValue($value)
     {
+        if($value)
+            $value = 1;
+        else
+            $value = 0;
+        
         $this->value = $value;
     }
 
@@ -117,9 +129,7 @@ class Text implements InputInterface
     public function save($post_id)
     {
 
-
         $post = get_post($post_id);
-
         if (!$post) {
             return false;
         }
