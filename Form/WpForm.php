@@ -24,13 +24,13 @@ class WpForm
     public function __construct($content_type, $form_title, array $formsFields, array $_post = array())
     {
         
-        $current_content_type = $_POST['post_type'];
-        if(!$current_content_type){
-            $current_content_type = 'post';
-        }
+//        $current_content_type = $_POST['post_type'];
+//        if(!$current_content_type){
+//            $current_content_type = 'post';
+//        }
         
-        if($content_type != $current_content_type)
-            return;
+//        if($content_type != $current_content_type)
+//            return;
             
         
         $this->fields = $formsFields;
