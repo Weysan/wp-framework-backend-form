@@ -85,6 +85,7 @@ class WpForm
                'label' => $field['label'],
                'desc' => $field['desc'],
                'wysiwyg' => $field['wysiwyg'],
+               'content_type' => $this->content_type
             );
 
             $input = new $class_input($field_id, $value, $field_id, $args);

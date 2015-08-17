@@ -35,13 +35,33 @@ class File implements InputInterface
 
         
         
-        if(!current_theme_supports('post-thumbnails')){
+        //if(!current_theme_supports('post-thumbnails')){
+        if(!post_type_supports($this->args['content_type'], 'post-thumbnails')){
             \wp_enqueue_media();
         }
         \wp_enqueue_script('custom-header');
 
         \add_action('admin_menu', array($this, 'createMenuBO'));
+        
+//        \add_action('admin_print_scripts', array($this, 'addPrintScripts'));
+//        \add_action('admin_print_styles', array($this, 'addPrintStyle'));
+        
+        
+        
     }
+    
+//    public function addPrintScripts() {    
+//        wp_enqueue_script('media-upload');
+//        wp_enqueue_script('thickbox');
+//        wp_register_script('my-upload', WP_PLUGIN_URL.'/lnh-flux/js/scripts.js', array('jquery','media-upload','thickbox'));
+//        wp_enqueue_script('my-upload');
+//    }
+//
+//    public function addPrintStyle() {
+//
+//        wp_enqueue_style('thickbox');
+//    }
+    
 
     public function createMenuBO()
     {
@@ -59,7 +79,8 @@ class File implements InputInterface
         $modal_update_href = esc_url(add_query_arg(array(
             'page' => 'update_file_'.$this->id,
             '_wpnonce' => wp_create_nonce('update_file_'.$this->id),
-            'post' => $_GET['post'],
+            'post_id' => $_GET['post'],
+            'multiple' => 1
         ), admin_url('upload.php')));
 
         $content_type = $_GET['post_type'];
@@ -90,6 +111,10 @@ class File implements InputInterface
             data-update="Set '.$this->label.'">Set '.$this->label.'
         </a> | '.$description.'
         </p>';
+        
+        
+        /*$sHtml = '<input id="upload_image" type="text" size="36" name="upload_image" value="" />
+                    <input id="upload_image_button" type="button" value="Upload Image" />';*/
 
         return $sHtml;
     }
@@ -140,14 +165,15 @@ class File implements InputInterface
      */
     public function uploadFile()
     {
+        die();
         // Add to the top of our data-update-link page
         if (isset($_GET['file'])) {
-            //die('là');
+            die('là');
             $id_file = $_GET['file'];
 
             $id_input = str_replace('update_file_', '', $_GET['page']);
 
-            $post_id = $_GET['post'];
+            $post_id = $_GET['post_id'];
 
             $update = update_post_meta($post_id, $id_input, $id_file);
 
