@@ -12,6 +12,11 @@ class Validation
     
     private $content_type;
     
+    /**
+     * Get error messages and init filters
+     * 
+     * @param \Form\Form $form
+     */
     public function __construct(\Form\Form $form)
     {
         
@@ -24,6 +29,11 @@ class Validation
         \add_filter('post_updated_messages', array($this, 'addErrorMessage'));
     }
     
+    /**
+     * Get the current content type
+     * 
+     * @param integer $post
+     */
     public function getContentType($post)
     {
         $data = get_post($post);
@@ -33,24 +43,36 @@ class Validation
         \add_filter('redirect_post_location', array($this, 'redirectionPostFilter'), 99);
     }
     
+    /**
+     * Hook the Redirect URL to add the error message.
+     * 
+     * @param string $location
+     * @return string
+     */
     public function redirectionPostFilter($location)
     {
         
         $_SESSION['flash']['error_msg']['msg'] = $this->error_msg;
         
         
-        $location = add_query_arg('error', 99, $location);
+        $location = add_query_arg('message', 99, $location);
         
         return $location;
     }
     
+    /**
+     * Add the custom error message
+     * 
+     * @param array $messages
+     * @return array
+     */
     public function addErrorMessage($messages)
     {
-        $messages[$_SESSION['flash']['error_msg']['type']][99] = $_SESSION['flash']['error_msg'];
-
-        //unset($_SESSION['flash']['error_msg']);
-        var_dump($messages);
-        die();
+        if(isset($_SESSION['flash']['error_msg']['msg'])){
+            $messages[$_SESSION['flash']['error_msg']['type']][99] = $_SESSION['flash']['error_msg']['msg'];
+        }
+        unset($_SESSION['flash']['error_msg']);
+        
         return $messages;
     }
     

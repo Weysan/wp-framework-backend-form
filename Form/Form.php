@@ -21,6 +21,8 @@ class Form
         if ($post) {
             $this->post = $post;
         }
+        //init the errors' display
+        new Validation($this);
     }
 
     /**
@@ -89,6 +91,8 @@ class Form
             if (!$input->validate()) {
                 $validate = false;
                 $this->msg_error = $input->getErrorMessage();
+                //init error message
+                new Validation($this);
                 //\add_action( 'admin_notices', array($this, 'errorForm') );
                 break;
             }
@@ -134,7 +138,6 @@ class Form
                  $save[$k] = $input->save($post_id);
             }
         } else {
-            //new Validation($this);
             return false;
         }
     }
