@@ -30,6 +30,7 @@ class Url extends Text implements InputInterface
                 $path_match = "/^\/(([a-zA-Z0-9])+\/?)+(([a-zA-Z0-9])+\.?([a-zA-Z0-9]){0,3})?$/i"; //vérifie qu'une URL ressemble à /path/to/file.php
 
                 if (!preg_match($path_match, $this->value)) {
+                    $this->error_msg = $this->label . ' n\'est pas une URL valide.';
                     return false;
                 } else {
                     return true;

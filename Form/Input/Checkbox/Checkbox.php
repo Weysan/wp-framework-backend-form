@@ -20,6 +20,8 @@ class Checkbox implements InputInterface
     protected $section;
 
     protected $label;
+    
+    protected $error_msg;
 
     public function __construct($name, $value = null, $id = null, $args = array(), $section = null)
     {
@@ -86,11 +88,14 @@ class Checkbox implements InputInterface
     public function validate()
     {
         if (isset($this->args['required']) && $this->args['required'] && !$this->value) {
+            $this->error_msg = $this->label . ' est requis.';
             return false;
         }
         
-        if(!in_array($this->value, array(0, 1)))
-                return false;
+        if(!in_array($this->value, array(0, 1))){
+            $this->error_msg = $this->label . ' n\'a pas une valeur valide.';
+            return false;
+        }
 
         return true;
     }
@@ -135,5 +140,15 @@ class Checkbox implements InputInterface
         }
         
         return update_post_meta($post_id, $this->id, $this->value);
+    }
+    
+    /**
+     * Get error message
+     * 
+     * @return string
+     */
+    public function getErrorMessage()
+    {
+        return $this->error_msg;
     }
 }

@@ -2,6 +2,7 @@
 namespace Form;
 
 use Form\Input\Nonce\Nonce;
+use Form\Errors\Validation;
 /**
  * Va générer les actions wordpress
  * Les actions de callback

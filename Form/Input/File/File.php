@@ -18,6 +18,8 @@ class File implements InputInterface
     private $args;
 
     private $value;
+    
+    private $error_msg;
 
     public function __construct($name, $value = null, $id = null, $args = array(), $section = null)
     {
@@ -130,6 +132,7 @@ class File implements InputInterface
             return true;
         }
 
+        $this->error_msg = $this->label . " n'a pas une valeur correcte.";
         return false;
     }
 
@@ -193,5 +196,15 @@ class File implements InputInterface
             <?php
             exit;
         }
+    }
+    
+    /**
+     * Get error message
+     * 
+     * @return string
+     */
+    public function getErrorMessage()
+    {
+        return $this->error_msg;
     }
 }

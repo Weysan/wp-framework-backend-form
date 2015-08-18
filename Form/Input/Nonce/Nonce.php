@@ -62,4 +62,9 @@ class Nonce implements InputInterface
     public function getName()
     {
     }
+    
+    public function getErrorMessage()
+    {
+        
+    }
 }
