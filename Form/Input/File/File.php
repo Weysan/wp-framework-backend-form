@@ -74,7 +74,7 @@ class File implements InputInterface
         $media_id = $this->value;
 
         if ($media_id) {
-            $image_attributes = wp_get_attachment_image_src($media_id);
+            $image_attributes = wp_get_attachment_image_src($media_id, 'medium');
 
             $img_src = '<img src="'.$image_attributes[0].'" width="'.$image_attributes[1].'" height="'.$image_attributes[2].'">';
         } else {
