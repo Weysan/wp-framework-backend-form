@@ -35,34 +35,21 @@ class File implements InputInterface
             $this->label = $this->args['label'];
         }
 
-        
-        
-        //if(!current_theme_supports('post-thumbnails')){
         if(!post_type_supports($this->args['content_type'], 'post-thumbnails')){
             \wp_enqueue_media();
+            \wp_enqueue_script( $handle = 'hs-img-uploader',
+                           $src = plugins_url('wp-framework-backend-form/Form/Input/File/js/uploader.js'),
+                           $deps = array('jquery'),
+                           $ver = false,
+                           $in_footer = true );
         }
         \wp_enqueue_script('custom-header');
 
         \add_action('admin_menu', array($this, 'createMenuBO'));
         
-//        \add_action('admin_print_scripts', array($this, 'addPrintScripts'));
-//        \add_action('admin_print_styles', array($this, 'addPrintStyle'));
-        
-        
-        
+        /* AJAX data */
+        \add_action( 'wp_ajax_file_'.$this->id, array($this, 'ajaxFileLink') );
     }
-    
-//    public function addPrintScripts() {    
-//        wp_enqueue_script('media-upload');
-//        wp_enqueue_script('thickbox');
-//        wp_register_script('my-upload', WP_PLUGIN_URL.'/lnh-flux/js/scripts.js', array('jquery','media-upload','thickbox'));
-//        wp_enqueue_script('my-upload');
-//    }
-//
-//    public function addPrintStyle() {
-//
-//        wp_enqueue_style('thickbox');
-//    }
     
 
     public function createMenuBO()
@@ -78,13 +65,6 @@ class File implements InputInterface
      */
     public function getDisplay()
     {
-        $modal_update_href = esc_url(add_query_arg(array(
-            'page' => 'update_file_'.$this->id,
-            '_wpnonce' => wp_create_nonce('update_file_'.$this->id),
-            'post_id' => $_GET['post'],
-            'multiple' => 1
-        ), admin_url('upload.php')));
-
         $content_type = $_GET['post_type'];
 
         if (!isset($content_type)) {
@@ -105,18 +85,10 @@ class File implements InputInterface
         if (isset($this->args['desc'])) {
             $description = $this->args['desc'];
         }
-
-        $sHtml = '<p>'.$img_src.'<br />
-        <a id="choose-from-library-link" href="#"
-            data-update-link="'.esc_attr($modal_update_href).'"
-            data-choose="Choose a Default Image"
-            data-update="Set '.$this->label.'">Set '.$this->label.'
-        </a> | '.$description.'
-        </p>';
         
-        
-        /*$sHtml = '<input id="upload_image" type="text" size="36" name="upload_image" value="" />
-                    <input id="upload_image_button" type="button" value="Upload Image" />';*/
+        $sHtml = '<div id="apercu-'.$this->id.'">'.$img_src.'</div>'
+                . '<input type="text" id="value_'.$this->id.'" name="'.$this->id.'" value="'.$this->value.'" />'
+                . '<button class="button-secondary upload_image_button" data-pic-to="apercu-'.$this->id.'">'.$this->label.'</button>';
 
         return $sHtml;
     }
@@ -148,7 +120,13 @@ class File implements InputInterface
 
     public function save($post_id)
     {
-        return true;
+        $post = get_post($post_id);
+
+        if (!$post) {
+            return false;
+        }
+        
+        return update_post_meta($post_id, $this->id, $this->value);
     }
 
     /**
@@ -206,5 +184,25 @@ class File implements InputInterface
     public function getErrorMessage()
     {
         return $this->error_msg;
+    }
+    
+    /**
+     * 
+     */
+    public function ajaxFileLink()
+    {
+        
+        $id_attachment = $_POST['attachment_id'];
+        //var_dump($id_attachment);
+        $data = wp_get_attachment_image_src($id_attachment, 'medium');
+        
+        $return = array();
+        
+        if($data){
+            $return['url'] = $data[0];
+        }
+        
+        echo json_encode($return);
+        die();
     }
 }
