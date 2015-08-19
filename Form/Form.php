@@ -2,6 +2,7 @@
 namespace Form;
 
 use Form\Input\InputInterface;
+use Form\Errors\Validation;
 /**
  * Create a form instance
  *
@@ -12,12 +13,16 @@ class Form
     private $inputs = array();
 
     private $post = array();
+    
+    private $msg_error;
 
     public function __construct($post = array())
     {
         if ($post) {
             $this->post = $post;
         }
+        //init the errors' display
+        new Validation($this);
     }
 
     /**
@@ -85,11 +90,33 @@ class Form
         foreach ($this->inputs as $input) {
             if (!$input->validate()) {
                 $validate = false;
+                $this->msg_error = $input->getErrorMessage();
+                //init error message
+                new Validation($this);
+                //\add_action( 'admin_notices', array($this, 'errorForm') );
                 break;
             }
         }
 
         return $validate;
+    }
+    
+    /**
+     * Return global form error
+     * 
+     * @return string|false
+     */
+    public function errorForm()
+    {
+        
+        if(!empty($this->msg_error)){
+            $class = "error";
+            $message = "Il y a des erreurs dans le formulaires : " . $this->msg_error;
+
+            return "<div class=\"$class\"> <p>$message</p></div>";
+        } else {
+            return false;
+        }
     }
 
     public function setValues(array $values)
@@ -108,10 +135,7 @@ class Form
     {
         if ($this->validate()) {
             foreach ($this->inputs as $k => $input) {
-                //var_dump($input);
                  $save[$k] = $input->save($post_id);
-                 //if($save[$k] === false)
-                     //throw new \Exception('Error while saving '. $input->getName());
             }
         } else {
             return false;

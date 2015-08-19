@@ -17,4 +17,6 @@ interface InputInterface
     public function save($post_id);
 
     public function getName();
+    
+    public function getErrorMessage();
 }

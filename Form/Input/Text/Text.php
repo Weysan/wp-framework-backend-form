@@ -20,6 +20,8 @@ class Text implements InputInterface
     protected $section;
 
     protected $label;
+    
+    protected $error_msg;
 
     public function __construct($name, $value = null, $id = null, $args = array(), $section = null)
     {
@@ -78,10 +80,12 @@ class Text implements InputInterface
     public function validate()
     {
         if (isset($this->args['required']) && $this->args['required'] && !$this->value) {
+            $this->error_msg = $this->label . ' est requis.';
             return false;
         }
 
         if (!is_string($this->value) && !is_null($this->value)) {
+            $this->error_msg = $this->label . ' n\'a pas une valeur valide.';
             return false;
         }
 
@@ -125,5 +129,15 @@ class Text implements InputInterface
         }
         
         return update_post_meta($post_id, $this->id, $this->value);
+    }
+    
+    /**
+     * Get error message
+     * 
+     * @return string
+     */
+    public function getErrorMessage()
+    {
+        return $this->error_msg;
     }
 }
