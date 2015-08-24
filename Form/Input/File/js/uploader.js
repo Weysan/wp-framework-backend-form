@@ -53,7 +53,6 @@ jQuery(document).ready(function(){
             jQuery.post(ajaxurl, data, function(response) {
                     
                     var object = JSON.parse(response);
-                    
                   jQuery('#'+data_apercu).html('<img src="'+object.url+'" />');
                   jQuery('input#value_'+id_field).val(attachment.id);
             });

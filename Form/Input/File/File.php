@@ -34,7 +34,7 @@ class File implements InputInterface
         if (isset($this->args['label'])) {
             $this->label = $this->args['label'];
         }
-
+        
         if(!post_type_supports($this->args['content_type'], 'post-thumbnails')){
             \wp_enqueue_media();
             \wp_enqueue_script( $handle = 'hs-img-uploader',
@@ -43,7 +43,6 @@ class File implements InputInterface
                            $ver = false,
                            $in_footer = true );
         }
-        \wp_enqueue_script('custom-header');
 
         \add_action('admin_menu', array($this, 'createMenuBO'));
         
@@ -55,7 +54,7 @@ class File implements InputInterface
     public function createMenuBO()
     {
         /* create menu page */
-           \add_media_page($this->label, $this->label, 'manage_options', 'update_file_'.$this->id, array($this, 'uploadFile'));
+        //\add_media_page($this->label, $this->label, 'manage_options', 'update_file_'.$this->id, array($this, 'uploadFile'));
     }
 
     /**
@@ -138,43 +137,6 @@ class File implements InputInterface
     {
         return $this->name;
     }
-
-    /**
-     * Upload une image via l'uploader wordpress
-     * Enregistre la meta data
-     * Redirige vers le formulaire
-     */
-    public function uploadFile()
-    {
-        die();
-        // Add to the top of our data-update-link page
-        if (isset($_GET['file'])) {
-            die('là');
-            $id_file = $_GET['file'];
-
-            $id_input = str_replace('update_file_', '', $_GET['page']);
-
-            $post_id = $_GET['post_id'];
-
-            $update = update_post_meta($post_id, $id_input, $id_file);
-
-            $url_to_redirect = esc_url(add_query_arg(array(
-                                    'post' => $post_id,
-                                    'action' => 'edit',
-                                ), admin_url('post.php')));
-
-            //var_dump($url_to_redirect); die();
-            ?>
-        <script>
-            jQuery(window).ready(function(){
-                window.location = '<?php echo str_replace('&#038;', '&', $url_to_redirect);
-            ?>';
-            });
-        </script>
-            <?php
-            exit;
-        }
-    }
     
     /**
      * Get error message
@@ -191,7 +153,6 @@ class File implements InputInterface
      */
     public function ajaxFileLink()
     {
-        
         $id_attachment = $_POST['attachment_id'];
         //var_dump($id_attachment);
         $data = wp_get_attachment_image_src($id_attachment, 'medium');

@@ -25,27 +25,28 @@ class WpForm
     public function __construct($content_type, $form_title, array $formsFields, array $_post = array())
     {
         
-//        $current_content_type = $_POST['post_type'];
-//        if(!$current_content_type){
-//            $current_content_type = 'post';
-//        }
-        
-//        if($content_type != $current_content_type)
-//            return;
-            
-        
         $this->fields = $formsFields;
 
         $this->_post = $_post;
-
+        
         $this->content_type = $content_type;
 
         $this->form_title = $form_title;
-
-        $this->generateForm();
-
+        
+        \add_action('current_screen', array($this, 'init'));
+    }
+    
+    public function init()
+    {
+        $current = \get_current_screen();
+        
+        if($this->content_type != $current->post_type)
+            return;
+        
+        
         \add_action('add_meta_boxes', array( $this, 'addMetaBox' ));
         \add_action('save_post', array( $this, 'save' ));
+        $this->generateForm();
     }
 
     /**
