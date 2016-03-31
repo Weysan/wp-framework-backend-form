@@ -2,7 +2,7 @@
 /*
 Plugin Name: Wordpress Framework backofice forms
 Description: Framework permettant de créer facilement des champs en Backoffice Wordpress
-Version:     1.0
+Version:     1.0beta2
 Author:      Raphaël GONCALVES
 Author URI:  http://www.raphael-goncalves.fr
 License:     GPL2
