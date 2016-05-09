@@ -1,13 +1,13 @@
 <?php
-namespace Form\Input\Text;
+namespace Form\Input\Select;
 
 use Form\Input\InputInterface;
 /**
- * Type de champs Input text
+ * Création champs de type Select
  *
- * @author Raphael GONCALVES <raphael@couleur-citron.com>
+ * @author Raphael GONCALVES <contact@raphael-goncalves.fr>
  */
-class Text implements InputInterface
+class Select implements InputInterface
 {
     protected $name;
 
@@ -20,7 +20,7 @@ class Text implements InputInterface
     protected $section;
 
     protected $label;
-    
+
     protected $error_msg;
 
     public function __construct($name, $value = null, $id = null, $args = array(), $section = null)
@@ -30,8 +30,6 @@ class Text implements InputInterface
         $this->value = $value;
 
         $this->id = $id;
-
-        $args['class'] = 'large-text';
 
         $this->args = $args;
 
@@ -50,12 +48,12 @@ class Text implements InputInterface
     public function getDisplay()
     {
         $html = '<tr>';
-        
+
         if ($this->label) {
             $html .= '<th><label for="'.$this->id.'">'.$this->label.'</label></th>';
         }
 
-        $html .= '<td><input type="text" name="'.$this->name.'" value="'.$this->value.'"';
+        $html .= '<td><select name="'.$this->name.'"';
 
         if ($this->id) {
             $html .= ' id="'.$this->id.'"';
@@ -65,7 +63,18 @@ class Text implements InputInterface
             $html .= ' class="'.$this->args['class'].'"';
         }
 
-        $html .= ' /><br />'.$this->args['desc'].'</td>';
+        $html .= '>';
+
+        foreach($this->args['choices'] as $value => $label){
+            $html .= '<option value="'.$value.'"';
+            if($this->value && $this->value == $value){
+                $html .= ' selected';
+            }
+            $html .= '>'.$label.'</option>';
+        }
+        
+
+        $html .= '</select></td>';
 
         $html .= '</tr>';
 
@@ -81,11 +90,6 @@ class Text implements InputInterface
     {
         if (isset($this->args['required']) && $this->args['required'] && !$this->value) {
             $this->error_msg = $this->label . ' est requis.';
-            return false;
-        }
-
-        if (!is_string($this->value) && !is_null($this->value)) {
-            $this->error_msg = $this->label . ' n\'a pas une valeur valide.';
             return false;
         }
 
@@ -121,19 +125,17 @@ class Text implements InputInterface
     public function save($post_id)
     {
 
-
         $post = get_post($post_id);
-
         if (!$post) {
             return false;
         }
-        
+
         return update_post_meta($post_id, $this->id, $this->value);
     }
-    
+
     /**
      * Get error message
-     * 
+     *
      * @return string
      */
     public function getErrorMessage()

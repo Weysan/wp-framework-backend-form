@@ -73,7 +73,7 @@ class Checkbox implements InputInterface
             $html .= ' class="'.$this->args['class'].'"';
         }
 
-        $html .= ' /></td>';
+        $html .= ' /><br /><small>'.$this->args['desc'].'</small></td>';
 
         $html .= '</tr>';
 
