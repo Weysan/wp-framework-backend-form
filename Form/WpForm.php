@@ -3,6 +3,7 @@ namespace Form;
 
 use Form\Input\Nonce\Nonce;
 use Form\Errors\Validation;
+
 /**
  * Va générer les actions wordpress
  * Les actions de callback
@@ -24,28 +25,28 @@ class WpForm
 
     public function __construct($content_type, $form_title, array $formsFields, array $_post = array())
     {
-        
+
         $this->fields = $formsFields;
 
         $this->_post = $_post;
-        
+
         $this->content_type = $content_type;
 
         $this->form_title = $form_title;
-        
+
         \add_action('current_screen', array($this, 'init'));
     }
-    
+
     public function init()
     {
         $current = \get_current_screen();
-        
-        if($this->content_type != $current->post_type)
+
+        if ($this->content_type != $current->post_type)
             return;
-        
-        
-        \add_action('add_meta_boxes', array( $this, 'addMetaBox' ));
-        \add_action('save_post', array( $this, 'save' ));
+
+
+        \add_action('add_meta_boxes', array($this, 'addMetaBox'));
+        \add_action('save_post', array($this, 'save'));
         $this->generateForm();
     }
 
@@ -84,12 +85,16 @@ class WpForm
             $class_input = $field['type'];
             $field_id = $field['id'];
             $args = array(
-               'label' => $field['label'],
-               'desc' => $field['desc'],
-               'wysiwyg' => $field['wysiwyg'],
-               'content_type' => $this->content_type
+                'label' => $field['label'],
+                'desc' => $field['desc'],
+                'wysiwyg' => $field['wysiwyg'],
+                'content_type' => $this->content_type
             );
 
+            if (isset($field['choices'])) {
+                $args['choices'] = $field['choices'];
+            }
+            
             $input = new $class_input($field_id, $value, $field_id, $args);
 
             $this->formInstance->addInput($input);
@@ -104,35 +109,39 @@ class WpForm
      */
     public function addMetaBox()
     {
+        static $iteration = 0;
+
         $title = $this->form_title;
 
-        $callback = array( $this, 'show_custom_meta_box' );
-        if (function_exists('show_custom_meta_box_'.$this->content_type)) {
-            $callback = 'show_custom_meta_box_'.$this->content_type;
+        $callback = array($this, 'show_custom_meta_box');
+        if (function_exists('show_custom_meta_box_' . $this->content_type)) {
+            $callback = 'show_custom_meta_box_' . $this->content_type;
         }
 
         add_meta_box(
-                    'custom_meta_box', // $id
-                    $title, // $title
-                    $callback, //'show_custom_meta_box_link', // $callback
-                    $this->content_type, // $page
-                    'normal', // $context
-                    'high',
-                    array(
-                        $this->content_type,
-                    )
-                ); // $priority
+            'custom_meta_box_'.$iteration, // $id
+            $title, // $title
+            $callback, //'show_custom_meta_box_link', // $callback
+            $this->content_type, // $page
+            'normal', // $context
+            'high',
+            array(
+                $this->content_type,
+            )
+        ); // $priority
+
+        $iteration++;
     }
 
     /**
      * display fields in our custom meta box area
      *
-     * @param  object  $post current post object
+     * @param  object $post current post object
      * @return boolean true
      */
     public function show_custom_meta_box($post)
     {
-        //vérification si on est dan sle bon content type
+        //vérification si on est dans le bon content type
         if ($post->post_type != $this->content_type) {
             return;
         }
@@ -155,9 +164,9 @@ class WpForm
     public function save($post_id)
     {
         $this->generateForm(get_post($post_id));
-        
+
         $this->formInstance->setValues($_POST);
-        
+
         return $this->formInstance->save($post_id);
     }
 }

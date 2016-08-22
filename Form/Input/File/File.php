@@ -2,6 +2,7 @@
 namespace Form\Input\File;
 
 use Form\Input\InputInterface;
+
 /**
  * Upload an image
  *
@@ -18,7 +19,7 @@ class File implements InputInterface
     private $args;
 
     private $value;
-    
+
     private $error_msg;
 
     public function __construct($name, $value = null, $id = null, $args = array(), $section = null)
@@ -34,22 +35,24 @@ class File implements InputInterface
         if (isset($this->args['label'])) {
             $this->label = $this->args['label'];
         }
-        
-        if(!post_type_supports($this->args['content_type'], 'post-thumbnails')){
+
+        if (!post_type_supports($this->args['content_type'], 'post-thumbnails')) {
             \wp_enqueue_media();
-            \wp_enqueue_script( $handle = 'hs-img-uploader',
-                           $src = plugins_url('wp-framework-backend-form/Form/Input/File/js/uploader.js'),
-                           $deps = array('jquery'),
-                           $ver = false,
-                           $in_footer = true );
+            \wp_enqueue_script(
+                $handle = 'hs-img-uploader',
+                $src = plugins_url('wp-framework-backend-form/Form/Input/File/js/uploader.js'),
+                $deps = array('jquery'),
+                $ver = false,
+                $in_footer = true
+            );
         }
 
         \add_action('admin_menu', array($this, 'createMenuBO'));
-        
+
         /* AJAX data */
-        \add_action( 'wp_ajax_file_'.$this->id, array($this, 'ajaxFileLink') );
+        \add_action('wp_ajax_file_' . $this->id, array($this, 'ajaxFileLink'));
     }
-    
+
 
     public function createMenuBO()
     {
@@ -75,7 +78,7 @@ class File implements InputInterface
         if ($media_id) {
             $image_attributes = wp_get_attachment_image_src($media_id, 'medium');
 
-            $img_src = '<img src="'.$image_attributes[0].'" width="'.$image_attributes[1].'" height="'.$image_attributes[2].'">';
+            $img_src = '<img src="' . $image_attributes[0] . '" width="' . $image_attributes[1] . '" height="' . $image_attributes[2] . '">';
         } else {
             $img_src = '';
         }
@@ -84,10 +87,10 @@ class File implements InputInterface
         if (isset($this->args['desc'])) {
             $description = $this->args['desc'];
         }
-        
-        $sHtml = '<div id="apercu-'.$this->id.'">'.$img_src.'</div>'
-                . '<input type="text" id="value_'.$this->id.'" name="'.$this->id.'" value="'.$this->value.'" />'
-                . '<button class="button-secondary upload_image_button" data-pic-to="apercu-'.$this->id.'">'.$this->label.'</button>';
+
+        $sHtml = '<div id="apercu-' . $this->id . '">' . $img_src . '</div>'
+            . '<input type="text" id="value_' . $this->id . '" name="' . $this->id . '" value="' . $this->value . '" />'
+            . '<button class="button-secondary upload_image_button" data-pic-to="apercu-' . $this->id . '">' . $this->label . '</button>';
 
         return $sHtml;
     }
@@ -99,7 +102,7 @@ class File implements InputInterface
      */
     public function validate()
     {
-        if ((int) $this->value == (string) $this->value) {
+        if ((int)$this->value == (string)$this->value) {
             return true;
         }
 
@@ -124,7 +127,7 @@ class File implements InputInterface
         if (!$post) {
             return false;
         }
-        
+
         return update_post_meta($post_id, $this->id, $this->value);
     }
 
@@ -137,32 +140,32 @@ class File implements InputInterface
     {
         return $this->name;
     }
-    
+
     /**
      * Get error message
-     * 
+     *
      * @return string
      */
     public function getErrorMessage()
     {
         return $this->error_msg;
     }
-    
+
     /**
-     * 
+     *
      */
     public function ajaxFileLink()
     {
         $id_attachment = $_POST['attachment_id'];
         //var_dump($id_attachment);
         $data = wp_get_attachment_image_src($id_attachment, 'medium');
-        
+
         $return = array();
-        
-        if($data){
+
+        if ($data) {
             $return['url'] = $data[0];
         }
-        
+
         echo json_encode($return);
         die();
     }

@@ -64,7 +64,7 @@ class Select implements InputInterface
         }
 
         $html .= '>';
-
+        
         foreach($this->args['choices'] as $value => $label){
             $html .= '<option value="'.$value.'"';
             if($this->value && $this->value == $value){

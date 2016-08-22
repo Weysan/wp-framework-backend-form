@@ -1,7 +1,7 @@
 //File Upload vars
 var file_frame;
 var wp_media_post_id = (wp.media == undefined) ? null : wp.media.model.settings.post.id; // Store the old id
-var set_to_post_id = 372; // Set this (from experminentation has to be a valid ID)
+var set_to_post_id = 1; // Set this (from experminentation has to be a valid ID)
 var jButton = null;
 
 jQuery(document).ready(function(){
