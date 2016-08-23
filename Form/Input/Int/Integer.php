@@ -23,7 +23,7 @@ class Integer extends Text
             $html .= '<th><label for="'.$this->id.'">'.$this->label.'</label></th>';
         }
     
-        $html .= '<td><input type="int" name="'.$this->name.'" value="'.$this->value.'"';
+        $html .= '<td><input type="number" step="1" name="'.$this->name.'" value="'.$this->value.'"';
     
         if ($this->id) {
             $html .= ' id="'.$this->id.'"';
