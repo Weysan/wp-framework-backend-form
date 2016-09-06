@@ -38,14 +38,15 @@ class File implements InputInterface
 
         if (!post_type_supports($this->args['content_type'], 'post-thumbnails')) {
             \wp_enqueue_media();
-            \wp_enqueue_script(
-                $handle = 'hs-img-uploader',
-                $src = plugins_url('wp-framework-backend-form/Form/Input/File/js/uploader.js'),
-                $deps = array('jquery'),
-                $ver = false,
-                $in_footer = true
-            );
         }
+
+        \wp_enqueue_script(
+            $handle = 'hs-img-uploader',
+            $src = plugin_dir_url(__FILE__) . 'js/uploader.js',
+            $deps = array('jquery'),
+            $ver = false,
+            $in_footer = true
+        );
 
         \add_action('admin_menu', array($this, 'createMenuBO'));
 
