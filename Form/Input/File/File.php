@@ -79,7 +79,12 @@ class File implements InputInterface
         if ($media_id) {
             $image_attributes = wp_get_attachment_image_src($media_id, 'medium');
 
-            $img_src = '<img src="' . $image_attributes[0] . '" width="' . $image_attributes[1] . '" height="' . $image_attributes[2] . '">';
+            if ($image_attributes) {
+                $img_src = '<img src="' . $image_attributes[0] . '" width="' . $image_attributes[1] . '" height="' . $image_attributes[2] . '">';
+            } else {
+                $link = wp_get_attachment_url($media_id);
+                $img_src = '<p><a href="'.$link.'" target="_blank">'.$link.'</a></p>';
+            }
         } else {
             $img_src = '';
         }
